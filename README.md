@@ -3,8 +3,8 @@ Capabilities:
  - Arithmetic operations
  - Trig functions
  - if, for, while statements
- - datatype conversion
- - calling functions (flow control)
+ - print and printf
+ - calling functions (control flow manipulation)
 
 
 **Test file**
