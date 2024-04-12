@@ -1,50 +1,41 @@
-/*
-Parser.y file
-To generate the parser run: "bison parser.y"
-*/
-
-//flex and bison files have 4 sections
-
-/*
 %{
-//this is the C-section. 
-#include "functions.h"
-#include "parser.h" //after running Bison on parser.y, a parser.h
-    and parser.c file will be produced
-#include "lexer.h" //same thing here
-// reference the implementation provided in Lexer.l
-int yyerror(SExpression **expression, yyscan_t scanner, const char *msg);
-//put error functions here too
+#include <stdio.h>
 %}
-*/
 
-/*
-declare terminal and non-terminal symbols, along with
-        their types, and define unions for semantic values
-ex:
-%token INTEGER
+%union {
+    char *str;      // String value for IDENTIFIER, CHAR
+    int num_int;    // Integer value for INTEGER
+    float num_float; // Float value for FLOAT_NUM
+    int boolean;    // Boolean value for BOOLEAN
+    int datatype;   // Data type value for INT_TYPE, FLOAT_TYPE, CHAR_TYPE, VOID_TYPE, BOOL_TYPE
+}
+
+%token <str> IDENTIFIER CHAR
+%token <num_int> INTEGER
+%token <num_float> FLOAT_NUM
+%token <boolean> BOOLEAN
+%token <datatype> INT_TYPE FLOAT_TYPE CHAR_TYPE VOID_TYPE BOOL_TYPE
+%token IF ELSE_IF ELSE RETURN FOR WHILE
+%token LEFT_PAREN RIGHT_PAREN LEFT_BRACE RIGHT_BRACE SEMICOLON COMMA DOT ASSIGNMENT INCREMENT DECREMENT OPERATOR RELATIONAL ERROR
+
 %%
-*/
 
-/*
-this is the rules section for defining how grammar is parsed
-ex:
-program: statements
-        ;
-statements: statements statement
-        | statement
-        ;
-statement: INTEGER '\n'     { printf("%d\n", $1); }
-        ;
+//make grammar together
+
 %%
-*/
 
-/*from here you can put additional C-code or even just put main
-But lets follow convention and put main in a separate file
+void yyerror(const char *msg) {
+    fprintf(stderr, "Parser error: %s\n", msg);
+}
+
 int main() {
     yyparse();
     return 0;
 }
-having this 4th section in Bison should not be here
-we should have all of our C-code in separate files
+
+/*
+yyerror(char* s) {
+    printf("ERROR: %s\n", s);
+    return 0;
+}
 */
