@@ -30,6 +30,8 @@ CHAR                {yylval.str = strdup(yytext); return CHAR}
 "else if"           {return ELSE_IF;}
 "else"              {return ELSE;}
 "return"            {return RETURN;}
+"break"             {return BREAK;}
+"continue"          {return CONTINUE}
 "for"               {return FOR;}
 "while"             {return WHILE;}
 "("                 {return LEFT_PAREN;}
