@@ -1,33 +1,35 @@
 %{
 #include <stdio.h>
+#include <parser.tab.h>
 %}
 
 DIGIT               [0-9]
 LETTER              [a-zA-Z]
 IDENT               {LETTER}({LETTER}|{DIGIT})*
-INTEGER             {DIGIT}+
+INT                 {DIGIT}+
 FLOAT               {DIGIT}+(\.{DIGIT}+)?
 STRING              \"([^\"\\]|\\.)*\"
 OPERATOR            [\+\-\*\/\%\^\&]
-ASSIGNMENT          (\=|\+\=|\-\=)
 RELATIONAL          (==|!=|<=|>=|<|>)
 SPACE               [ \t\n]
-COMMENT             ("//"(.*)|"/\*"(.*?)"\*/")          
+COMMENT             ("//"(.*)|"/\*"(.*?)"\*/")      
 
 %%
 IDENT               {yylval.str = strdup(yytext); return IDENTIFIER;}
-INTEGER             {yylval.num_int = atoi(yytext); return INTEGER;}
+INT                 {yylval.num_int = atoi(yytext); return INTEGER;}
 FLOAT               {yylval.num_float = atof(yytext); return FLOAT_NUM;}
-STRING              {yylval.str = strdup(yytext); return STRING}
+CHAR                {yylval.str = strdup(yytext); return CHAR}
 "true"              {yylval.boolean = 1; return BOOLEAN;}
 "false"             {yylval.boolean = 0; return BOOLEAN;}
 "int"               {return INT_TYPE;}
 "float"             {return FLOAT_TYPE;}
 "char"              {return CHAR_TYPE;}
-"string"            {return STRING_TYPE;}
 "void"              {return VOID_TYPE;}
 "bool"              {return BOOL_TYPE;}
 "if"                {return IF;}
+"else if"           {return ELSE_IF;}
+"else"              {return ELSE;}
+"return"            {return RETURN;}
 "for"               {return FOR;}
 "while"             {return WHILE;}
 "("                 {return LEFT_PAREN;}
@@ -42,7 +44,11 @@ STRING              {yylval.str = strdup(yytext); return STRING}
 "--"                {return DECREMENT;}
 OPERATOR            {yylval.str = strdup(yytext); return OPERATOR;}
 RELATIONAL          {yylval.str = strdup(yytext); return RELATIONAL;}
-SPACE #not_finished
-COMMENT #not_finished
-. #no match, show error
+SPACE               {}
+COMMENT             {}
+.                   {return ERROR;}
 %%
+
+yywrap() {
+
+}
