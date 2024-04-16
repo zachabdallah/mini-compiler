@@ -9,7 +9,7 @@ DIGIT               [0-9]
 LETTER              [a-zA-Z]
 IDENT               {LETTER}({LETTER}|{DIGIT})*
 INT                 {DIGIT}+
-FLOAT               {DIGIT}+(\.{DIGIT}+)?
+NUM_FLOAT           {DIGIT}+(\.{DIGIT}+)?
 STRING              \"([^\"\\]|\\.)*\"
 OPERATOR            [\+\-\*\/\%\^\&]
 RELATIONAL          (==|!=|<=|>=|<|>)
@@ -20,7 +20,7 @@ COMMENT             ("//"(.*)|"/\*"(.*?)"\*/")
 //define actions taken when regex are matched to user input
 IDENT               {yylval.str = strdup(yytext); return IDENTIFIER;}
 INT                 {yylval.num_int = atoi(yytext); return INTEGER;}
-FLOAT               {yylval.num_float = atof(yytext); return FLOAT_NUM;}
+NUM_FLOAT           {yylval.num_float = atof(yytext); return FLOAT;}
 CHAR                {yylval.str = strdup(yytext); return CHAR}
 "true"              {yylval.boolean = 1; return BOOLEAN;}
 "false"             {yylval.boolean = 0; return BOOLEAN;}
