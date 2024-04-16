@@ -26,7 +26,7 @@ now, "%start program" means that our starting symbol is "program", which you wil
 */
 
 %%
-//grammar rules specify how to recognize tokens in the input text
+///grammar rules specify how to recognize tokens in the input text
 
 program : statement_list;
 // this means S -> A
