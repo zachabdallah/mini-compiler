@@ -5,14 +5,14 @@
 %union {
     char *str;      // String value for IDENTIFIER, CHAR
     int num_int;    // Integer value for INTEGER
-    float num_float; // Float value for FLOAT_NUM
+    float num_float; // Float value for FLOAT
     int boolean;    // Boolean value for BOOLEAN
     int datatype;   // Data type value for INT_TYPE, FLOAT_TYPE, CHAR_TYPE, VOID_TYPE, BOOL_TYPE
 }
 
 %token <str> IDENTIFIER CHAR
 %token <num_int> INTEGER
-%token <num_float> FLOAT_NUM
+%token <num_float> FLOAT
 %token <boolean> BOOLEAN
 %token <datatype> INT_TYPE FLOAT_TYPE CHAR_TYPE VOID_TYPE BOOL_TYPE
 %token IF ELSE_IF ELSE RETURN BREAK CONTINUE FOR WHILE
@@ -50,7 +50,7 @@ term : factor | term '*' factor | term '\' factor;
 
 factor : primary | factor '^' primary;
 
-primary : INTEGER | FLOAT_NUM | IDENTIFIER | '(' expression ')';
+primary : INTEGER | FLOAT | IDENTIFIER | '(' expression ')';
 
 trig_func : SIN '(' expression ')'  { $$ = sin($3); }
           | COS '(' expression ')'  { $$ = cos($3); }
