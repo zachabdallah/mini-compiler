@@ -17,7 +17,7 @@ SPACE               [ \t\n]
 COMMENT             ("//"(.*)|"/\*"(.*?)"\*/")      
 
 %%
-//define actions taken when tokens are matched to user input
+//define actions taken when regex are matched to user input
 IDENT               {yylval.str = strdup(yytext); return IDENTIFIER;}
 INT                 {yylval.num_int = atoi(yytext); return INTEGER;}
 FLOAT               {yylval.num_float = atof(yytext); return FLOAT_NUM;}
