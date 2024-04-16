@@ -58,7 +58,7 @@ trig_func : SIN '(' expression ')'  { $$ = sin($3); }
           | ARCSIN '(' expression ')'  { $$ = arcsin($3); }
           | ARCCOS '(' expression ')'  { $$ = arccos($3); }
           | ARCTAN '(' expression ')'  { $$ = arctan($3); };
-*/
+/*
 ok, let's break this down. Now, we understand the first part of this which means "sin(x)", but what does "{ $$ = sin($3); }" mean? 
 the curly braces are used to enclose actions or code to be execute when the corresponding grammar rule is matched during parsing. ok got it, so it means {action}. This is called a "semantic action", which basically means that it's performing a meaningful action according to the code snippet that preceeded it.
 $$ represents the the value associated with the non-terminal symbol of the LHS (left hand side). Basically, it means that '$$' is a placeholder for the value we will be computed for 'trig_func'
