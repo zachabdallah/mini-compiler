@@ -54,6 +54,7 @@ CHAR                {yylval.str = strdup(yytext); return CHAR}
 "arcsin"            {return ARCSIN;}
 "arccos"            {return ARCCOS;}
 "arctan"            {return ARCTAN;}
+"printf"            {return PRINTF;}
 OPERATOR            {yylval.str = strdup(yytext); return OPERATOR;}
 RELATIONAL          {yylval.str = strdup(yytext); return RELATIONAL;}
 SPACE               {}
