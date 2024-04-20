@@ -1,8 +1,6 @@
 %{
 #include <stdio.h>
-// #include <parser.tab.h>
-
-char *yylval;
+#include "parser.tab.h"
 %}
 
 DIGIT               [0-9]
@@ -20,7 +18,7 @@ COMMENT             ("//"(.*)|"/\*"(.*?)"\*/")
 IDENT               {yylval.strval = strdup(yytext); return IDENTIFIER;}
 INT                 {yylval.num_int = atoi(yytext); return INTEGER;}
 NUM_FLOAT           {yylval.num_float = atof(yytext); return FLOAT;}
-CHAR                {yylval.str = strdup(yytext); return CHAR}
+CHAR                {yylval.strval = strdup(yytext); return CHAR;}
 "true"              {yylval.boolean = 1; return BOOLEAN;}
 "false"             {yylval.boolean = 0; return BOOLEAN;}
 "int"               {return INT_TYPE;}
@@ -33,7 +31,7 @@ CHAR                {yylval.str = strdup(yytext); return CHAR}
 "else"              {return ELSE;}
 "return"            {return RETURN;}
 "break"             {return BREAK;}
-"continue"          {return CONTINUE}
+"continue"          {return CONTINUE;}
 "for"               {return FOR;}
 "while"             {return WHILE;}
 "("                 {return LEFT_PAREN;}
@@ -54,8 +52,8 @@ CHAR                {yylval.str = strdup(yytext); return CHAR}
 "arccos"            {return ARCCOS;}
 "arctan"            {return ARCTAN;}
 "printf"            {return PRINTF;}
-OPERATOR            {yylval.str = strdup(yytext); return OPERATOR;}
-RELATIONAL          {yylval.str = strdup(yytext); return RELATIONAL;}
+OPERATOR            {yylval.strval = strdup(yytext); return OPERATOR;}
+RELATIONAL          {yylval.strval = strdup(yytext); return RELATIONAL;}
 SPACE               {}
 COMMENT             {}
 .                   {return ERROR;}
