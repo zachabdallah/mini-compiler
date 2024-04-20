@@ -1,10 +1,10 @@
 %{
 #include <stdio.h>
-#include <parser.tab.h>
+// #include <parser.tab.h>
+
+char *yylval;
 %}
 
-%%
-//lexical rules specified by regex
 DIGIT               [0-9]
 LETTER              [a-zA-Z]
 IDENT               {LETTER}({LETTER}|{DIGIT})*
@@ -14,11 +14,10 @@ STRING              \"([^\"\\]|\\.)*\"
 OPERATOR            [\+\-\*\/\%\^\&]
 RELATIONAL          (==|!=|<=|>=|<|>)
 SPACE               [ \t\n]
-COMMENT             ("//"(.*)|"/\*"(.*?)"\*/")      
+COMMENT             ("//"(.*)|"/\*"(.*?)"\*/")
 
 %%
-//define actions taken when regex are matched to user input
-IDENT               {yylval.str = strdup(yytext); return IDENTIFIER;}
+IDENT               {yylval.strval = strdup(yytext); return IDENTIFIER;}
 INT                 {yylval.num_int = atoi(yytext); return INTEGER;}
 NUM_FLOAT           {yylval.num_float = atof(yytext); return FLOAT;}
 CHAR                {yylval.str = strdup(yytext); return CHAR}
@@ -60,6 +59,8 @@ RELATIONAL          {yylval.str = strdup(yytext); return RELATIONAL;}
 SPACE               {}
 COMMENT             {}
 .                   {return ERROR;}
+%%
+
 /*
 lets look at the first line for IDENT
 {} means perform an action
@@ -80,8 +81,4 @@ now we can go define it in our parsing file as "%token <str> IDENTIFIER", from w
 now if you go look at the parser file, you will see that in our CFG, any word that is in all caps, like IDENTIFIER, is a terminal symbol since it is a token, and it's value, the lexeme, according to what yylval put into it, will be the one of the leaves in our parse tree.
 */
 
-%%
-
-yywrap() {
-
-}
+yywrap() { }
