@@ -1,61 +1,58 @@
+%option noyywrap
+
 %{
 #include <stdio.h>
-#include "parser.tab.h"
+#include "q.tab.h"
 %}
 
-DIGIT               [0-9]
-LETTER              [a-zA-Z]
-IDENT               {LETTER}({LETTER}|{DIGIT})*
-INT                 {DIGIT}+
-NUM_FLOAT           {DIGIT}+(\.{DIGIT}+)?
+
+KEYWORD				[a-zA-Z]*
+IDENT               [a-zA-Z_][a-zA-Z0-9_]*
+INT                 [0-9]+
+NUM_FLOAT           [0-9]+(\.[0-9]+)?
 STRING              \"([^\"\\]|\\.)*\"
 OPERATOR            [\+\-\*\/\%\^\&]
 RELATIONAL          (==|!=|<=|>=|<|>)
-SPACE               [ \t\n]
-COMMENT             ("//"(.*)|"/\*"(.*?)"\*/")
+SPACE               [ \t\n\r\f]
+COMMENT             \/\/.*|\/\*[^*]*\*+\/* 
 
 %%
-IDENT               {yylval.strval = strdup(yytext); return IDENTIFIER;}
-INT                 {yylval.num_int = atoi(yytext); return INTEGER;}
-NUM_FLOAT           {yylval.num_float = atof(yytext); return FLOAT;}
-CHAR                {yylval.strval = strdup(yytext); return CHAR;}
-"true"              {yylval.boolean = 1; return BOOLEAN;}
-"false"             {yylval.boolean = 0; return BOOLEAN;}
-"int"               {return INT_TYPE;}
-"float"             {return FLOAT_TYPE;}
-"char"              {return CHAR_TYPE;}
-"void"              {return VOID_TYPE;}
-"bool"              {return BOOL_TYPE;}
-"if"                {return IF;}
-"else if"           {return ELSE_IF;}
-"else"              {return ELSE;}
-"return"            {return RETURN;}
-"break"             {return BREAK;}
-"continue"          {return CONTINUE;}
-"for"               {return FOR;}
-"while"             {return WHILE;}
-"("                 {return LEFT_PAREN;}
-")"                 {return RIGHT_PAREN;}
-"{"                 {return LEFT_BRACE;}
-"}"                 {return RIGHT_BRACE;}
-";"                 {return SEMICOLON;}
-","                 {return COMMA;}
-"."                 {return DOT;}
-"="                 {return ASSIGNMENT;}
+{KEYWORD}			{
+					printf("KEYWORD: %s\n", yytext);
+					if (strcmp(yytext, "int")) {
+						return INT_TYPE;
+						}
+					if (strcmp(yytext, "printf"))
+						return PRINTF;
+					}
+{IDENT}             {yylval.strval = strdup(yytext); return IDENTIFIER;}
+{INT}               {yylval.num_int = atoi(yytext); return INTEGER;}
+{NUM_FLOAT}         {yylval.num_float = atof(yytext); return FLOAT;}
+{STRING}			{
+					printf("STRING: %s\n", yytext);
+					yylval.strval = strdup(yytext); return STRING;}
+
+"("                 {return '(';}
+")"                 {return ')';}
+"{"                 {return '{';}
+"}"                 {return '}';}
+";"                 {return ';';}
+","                 {return ',';}
+"."                 {return '.';}
+"="                 {return '=';}
 "++"                {return INCREMENT;}
 "--"                {return DECREMENT;}
-[ \t\n]             ; //ignore
-"sin"               {return SIN;}
-"cos"               {return COS;}
-"tan"               {return TAN;}
-"arcsin"            {return ARCSIN;}
-"arccos"            {return ARCCOS;}
-"arctan"            {return ARCTAN;}
-"printf"            {return PRINTF;}
-OPERATOR            {yylval.strval = strdup(yytext); return OPERATOR;}
-RELATIONAL          {yylval.strval = strdup(yytext); return RELATIONAL;}
-SPACE               {}
-COMMENT             {}
+{OPERATOR}      	{yylval.strval = strdup(yytext); 
+						if (strcmp(yylval.strval, "+") == 0 || strcmp(yylval.strval, "-") == 0) 
+							return ADDITIVE_OPERATOR;
+						else if (strcmp(yylval.strval, "*") == 0|| strcmp(yylval.strval, "/") == 0 || strcmp(yylval.strval, "&") == 0) 
+							return MULTIPLICATIVE_OPERATOR;
+						else 
+							return UNKNOWN_OPERATOR;						
+					}
+{RELATIONAL}        {yylval.strval = strdup(yytext); return RELATIONAL;}
+{SPACE}             {}
+{COMMENT}           {}
 .                   {return ERROR;}
 %%
 
@@ -78,5 +75,3 @@ now we can go define it in our parsing file as "%token <str> IDENTIFIER", from w
 
 now if you go look at the parser file, you will see that in our CFG, any word that is in all caps, like IDENTIFIER, is a terminal symbol since it is a token, and it's value, the lexeme, according to what yylval put into it, will be the one of the leaves in our parse tree.
 */
-
-yywrap() { }
