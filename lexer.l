@@ -6,7 +6,7 @@
 %}
 
 
-KEYWORD				[a-zA-Z]*
+KEYWORD				("int"|"float"|"char"|"void"|"bool"|"if"|"else"|"else if"|"return"|"break"|"continue"|"for"|"while"|"sin"|"cos"|"tan"|"arcsin"|"arccos"|"arctan"|"printf")
 IDENT               [a-zA-Z_][a-zA-Z0-9_]*
 INT                 [0-9]+
 NUM_FLOAT           [0-9]+(\.[0-9]+)?
@@ -18,42 +18,98 @@ COMMENT             \/\/.*|\/\*[^*]*\*+\/*
 
 %%
 {KEYWORD}			{
-					printf("KEYWORD: %s\n", yytext);
-					if (strcmp(yytext, "int")) {
+					if (strcmp(yytext, "int") == 0) {
 						return INT_TYPE;
 						}
-					if (strcmp(yytext, "printf"))
+					if (strcmp(yytext, "float") == 0) {
+						return FLOAT_TYPE;
+						}
+					if (strcmp(yytext, "char") == 0) {
+						return CHAR_TYPE;
+						}					
+					if (strcmp(yytext, "void") == 0) {
+						return VOID_TYPE;
+						}	
+					if (strcmp(yytext, "bool") == 0) {
+						return BOOL_TYPE;
+						}				
+					if (strcmp(yytext, "if") == 0) {
+						return IF;
+						}
+					if (strcmp(yytext, "else") == 0) {
+						return ELSE;
+						}				
+					if (strcmp(yytext, "else if") == 0) {
+						return ELSE_IF;
+						}				
+					if (strcmp(yytext, "return") == 0) {
+						return RETURN;
+						}			
+					if (strcmp(yytext, "break") == 0) {
+						return BREAK;
+						}
+					if (strcmp(yytext, "continue") == 0) {
+						return CONTINUE;
+						}			
+					if (strcmp(yytext, "for") == 0) {
+						return FOR;
+						}			
+					if (strcmp(yytext, "while") == 0) {
+						return WHILE;
+						}				
+					if (strcmp(yytext, "sin") == 0) {
+						return SIN;
+						}
+					if (strcmp(yytext, "cos") == 0) {
+						return COS;
+						}				
+					if (strcmp(yytext, "tan")  == 0) {
+						return TAN;
+						}		
+					if (strcmp(yytext, "arcsin") == 0) {
+						return ARCSIN;
+						}	
+					if (strcmp(yytext, "arccos") == 0) {
+						return ARCCOS;
+						}		
+					if (strcmp(yytext, "arctan") == 0) {
+						return ARCTAN;
+						}					
+					if (strcmp(yytext, "printf") == 0) {
 						return PRINTF;
-					}
-{IDENT}             {yylval.strval = strdup(yytext); return IDENTIFIER;}
-{INT}               {yylval.num_int = atoi(yytext); return INTEGER;}
-{NUM_FLOAT}         {yylval.num_float = atof(yytext); return FLOAT;}
-{STRING}			{
-					printf("STRING: %s\n", yytext);
-					yylval.strval = strdup(yytext); return STRING;}
+						}
+					}	
+					
+{IDENT}				{ printf("IDENTIFIER: %s\n", yytext); yylval.strval = strdup(yytext); return IDENTIFIER; }
+{INT}           	{ printf("INTEGER: %s\n", yytext); yylval.num_int = atoi(yytext); return INTEGER;}
+{NUM_FLOAT}         { yylval.num_float = atof(yytext); return FLOAT;}
+{STRING}			{ yylval.strval = strdup(yytext); return STRING; }
 
-"("                 {return '(';}
-")"                 {return ')';}
-"{"                 {return '{';}
-"}"                 {return '}';}
-";"                 {return ';';}
-","                 {return ',';}
-"."                 {return '.';}
-"="                 {return '=';}
-"++"                {return INCREMENT;}
-"--"                {return DECREMENT;}
-{OPERATOR}      	{yylval.strval = strdup(yytext); 
-						if (strcmp(yylval.strval, "+") == 0 || strcmp(yylval.strval, "-") == 0) 
+"("					{ return '('; }
+")"					{ return ')'; }
+";"					{ return ';'; }
+","             	{ return ','; }
+"{"                 { return '{'; }
+"}"                 { return '}'; }
+"."                 { return '.'; }
+"="                 { return '='; }
+"++"                { return INCREMENT; }
+"--"                { return DECREMENT; }
+{OPERATOR}      	{ yylval.strval = strdup(yytext); 
+						if (strcmp(yylval.strval, "+") == 0 || strcmp(yylval.strval, "-") == 0) {
 							return ADDITIVE_OPERATOR;
-						else if (strcmp(yylval.strval, "*") == 0|| strcmp(yylval.strval, "/") == 0 || strcmp(yylval.strval, "&") == 0) 
+						}
+						else if (strcmp(yylval.strval, "*") == 0|| strcmp(yylval.strval, "/") == 0 || strcmp(yylval.strval, "&") == 0) {
 							return MULTIPLICATIVE_OPERATOR;
-						else 
-							return UNKNOWN_OPERATOR;						
+						}
+						else {
+							return UNKNOWN_OPERATOR;
+						}
 					}
-{RELATIONAL}        {yylval.strval = strdup(yytext); return RELATIONAL;}
+{RELATIONAL}        { yylval.strval = strdup(yytext); return RELATIONAL; }
 {SPACE}             {}
 {COMMENT}           {}
-.                   {return ERROR;}
+.                   { return ERROR; }
 %%
 
 /*
