@@ -3,25 +3,27 @@
 %}
 
 %union {
-    char *str;      // String value for IDENTIFIER, CHAR
+    char *strval;      // strvaling value for IDENTIFIER, CHAR
     int num_int;    // Integer value for INTEGER
     float num_float; // Float value for FLOAT
     int boolean;    // Boolean value for BOOLEAN
     int datatype;   // Data type value for INT_TYPE, FLOAT_TYPE, CHAR_TYPE, VOID_TYPE, BOOL_TYPE
 }
 
-%token <str> IDENTIFIER CHAR
+%token <strval> IDENTIFIER CHAR STRING
 %token <num_int> INTEGER
 %token <num_float> FLOAT
 %token <boolean> BOOLEAN
 %token <datatype> INT_TYPE FLOAT_TYPE CHAR_TYPE VOID_TYPE BOOL_TYPE
+%token KEYWORD PRINTF
 %token IF ELSE_IF ELSE RETURN BREAK CONTINUE FOR WHILE
-%token LEFT_PAREN RIGHT_PAREN LEFT_BRACE RIGHT_BRACE SEMICOLON COMMA DOT ASSIGNMENT INCREMENT DECREMENT OPERATOR RELATIONAL ERROR
+%token INCREMENT DECREMENT RELATIONAL ERROR
+%token ADDITIVE_OPERATOR MULTIPLICATIVE_OPERATOR UNKNOWN_OPERATOR
 %token SIN COS TAN ARCSIN ARCCOS ARCTAN
 
 %start program 
 /*
-start is a directive -an instruction, that indicates which non-terminal the parser should start with when parsing. Think literally of the 'S' in S->A we studied in class.
+start is a directive -an instrvaluction, that indicates which non-terminal the parser should start with when parsing. Think literally of the 'S' in S->A we studied in class.
 now, "%start program" means that our starting symbol is "program", which you will see defined below
 */
 
@@ -39,9 +41,10 @@ statement           : variable_declaration
                     | jump_statement
                     | function_call_statement
                     | empty_statement
+					| printf_statement
 
-variable_declaration : type IDENTIFIER SEMICOLON
-                      | type IDENTIFIER ASSIGNMENT expression SEMICOLON
+variable_declaration : type IDENTIFIER ';'
+                      | type IDENTIFIER '=' expression ';'
 
 type                : INT_TYPE
                     | FLOAT_TYPE
@@ -49,32 +52,39 @@ type                : INT_TYPE
                     | VOID_TYPE
                     | BOOL_TYPE
 
-assignment_statement: IDENTIFIER ASSIGNMENT expression SEMICOLON
+assignment_statement: IDENTIFIER '=' expression ';'
 
-expression_statement: expression SEMICOLON
+expression_statement: expression ';'
 
-selection_statement : IF LEFT_PAREN expression RIGHT_PAREN statement
-                    | IF LEFT_PAREN expression RIGHT_PAREN statement ELSE statement
-                    | IF LEFT_PAREN expression RIGHT_PAREN statement ELSE_IF LEFT_PAREN expression RIGHT_PAREN statement
+selection_statement : IF '(' expression ')' statement
+                    | IF '(' expression ')' statement ELSE statement
+                    | IF '(' expression ')' statement ELSE_IF '(' expression ')' statement
 
-iteration_statement : WHILE LEFT_PAREN expression RIGHT_PAREN statement
-                    | FOR LEFT_PAREN variable_declaration expression SEMICOLON expression RIGHT_PAREN statement
+iteration_statement : WHILE '(' expression ')' statement
+                    | FOR '(' variable_declaration expression ';' expression ')' statement
 
-jump_statement      : RETURN expression SEMICOLON
-                    | BREAK SEMICOLON
-                    | CONTINUE SEMICOLON
+jump_statement      : RETURN expression ';'
+                    | BREAK ';'
+                    | CONTINUE ';'
 
-function_call_statement : IDENTIFIER LEFT_PAREN arguments RIGHT_PAREN SEMICOLON
+function_call_statement : IDENTIFIER '(' arguments ')' ';'
+
+printf_statement	: PRINTF '(' STRING ')' ';'
+					| PRINTF '(' STRING ',' multi_expression ')' ';'
+					
+multi_expression	: expression
+					| expression ',' multi_expression								
 
 arguments           : argument_list | /* empty */
 
 argument_list       : expression
-                    | argument_list COMMA expression
+                    | argument_list ',' expression
 
-empty_statement     : SEMICOLON
+empty_statement     : ';'
 
 expression          : additive_expression
                     | expression relational_operator additive_expression
+					| STRING
 
 additive_expression : multiplicative_expression
                     | additive_expression ADDITIVE_OPERATOR multiplicative_expression
@@ -84,10 +94,10 @@ multiplicative_expression : primary_expression
 
 primary_expression : IDENTIFIER
                    | CONSTANT
-                   | LEFT_PAREN expression RIGHT_PAREN
+                   | '(' expression ')'
                    | function_call
 
-function_call       : IDENTIFIER LEFT_PAREN arguments RIGHT_PAREN
+function_call       : IDENTIFIER '(' arguments ')'
 
 relational_operator: RELATIONAL
 
@@ -96,58 +106,8 @@ CONSTANT            : INTEGER
                     | BOOLEAN
                     | CHAR
 
-ADDITIVE_OPERATOR   : PLUS
-                    | MINUS
 
-MULTIPLICATIVE_OPERATOR : TIMES
-                        | DIVIDE
-                        | MODULO
 
-LEFT_PAREN          : '('
-RIGHT_PAREN         : ')'
-LEFT_BRACE          : '{'
-RIGHT_BRACE         : '}'
-SEMICOLON           : ';'
-COMMA               : ','
-DOT                 : '.'
-ASSIGNMENT          : '='
-INCREMENT           : '++'
-DECREMENT           : '--'
-
-INTEGER             : [0-9]+
-FLOAT               : [0-9]+(\.[0-9]+)?
-BOOLEAN             : true|false
-CHAR                : '[^'\\]|\\.
-
-IDENTIFIER          : [a-zA-Z_][a-zA-Z0-9_]*
-
-INT_TYPE            : 'int'
-FLOAT_TYPE          : 'float'
-CHAR_TYPE           : 'char'
-VOID_TYPE           : 'void'
-BOOL_TYPE           : 'bool'
-
-IF                  : 'if'
-ELSE                : 'else'
-ELSE_IF             : 'else if'
-FOR                 : 'for'
-WHILE               : 'while'
-RETURN              : 'return'
-BREAK               : 'break'
-CONTINUE            : 'continue'
-
-SIN                 : 'sin'
-COS                 : 'cos'
-TAN                 : 'tan'
-ARCSIN              : 'arcsin'
-ARCCOS              : 'arccos'
-ARCTAN              : 'arctan'
-PRINTF              : 'printf'
-
-OPERATOR            : [\+\-\*\/\%\^\&]
-RELATIONAL          : (==|!=|<=|>=|<|>)
-SPACE               : [ \t\n]+
-COMMENT             : \/\/.*$|\/\*([^*]|[\r\n] 	|	(\*+([^*/]|[\r\n])))*\*+\/
 
 
 /*
@@ -191,7 +151,7 @@ $$ represents the the value associated with the non-terminal symbol of the LHS (
 sin($3) computes the value of the expression in the paranthesis
 and finally, the computed value of 'sin($3) is assigned to '$$', which means that the value of the 'trig_func' symbol will be set to the computed value of the sine function that applied to the expression inside the paranthesis. Please ask if u have questions.
 */
-*/
+
 
 
 %%
@@ -202,11 +162,6 @@ void yyerror(const char *msg) {
 
 int main() {
     yyparse();
-    return 0;
-}
-
-yyerror(char* s) {
-    printf("ERROR: %s\n", s);
     return 0;
 }
 
