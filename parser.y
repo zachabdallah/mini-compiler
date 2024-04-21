@@ -70,10 +70,10 @@ jump_statement      : RETURN expression ';'
 function_call_statement : IDENTIFIER '(' arguments ')' ';'
 
 printf_statement	: PRINTF '(' STRING ')' ';'
-					| PRINTF '(' STRING ',' multi_expression ')' ';'
+					| PRINTF '(' STRING ',' parameter ')' ';'
 					
-multi_expression	: expression
-					| expression ',' multi_expression								
+parameter			: expression
+					| expression ',' parameter							
 
 arguments           : argument_list | /* empty */
 
@@ -107,7 +107,7 @@ CONSTANT            : INTEGER
                     | CHAR
 
 
-
+%%
 
 
 /*
@@ -122,7 +122,7 @@ statement_list : statement | statement_list statement;
 statement : IF '(' expression ')' statement
           | IF '(' expression ')' statement ELSE statement
           | ELSE_IF '(' expression ')' statement;
-/*
+		  
 B -> a(C)B | a(C)BbB | c(C)B
 IF, ELSE, and ELSE_IF are terminal symbols. They are tokens that do not derive into other statements.
 basically, andything in ALL CAPS is a token and therefore a terminal symbol
@@ -152,9 +152,6 @@ sin($3) computes the value of the expression in the paranthesis
 and finally, the computed value of 'sin($3) is assigned to '$$', which means that the value of the 'trig_func' symbol will be set to the computed value of the sine function that applied to the expression inside the paranthesis. Please ask if u have questions.
 */
 
-
-
-%%
 
 void yyerror(const char *msg) {
     fprintf(stderr, "Parser error: %s\n", msg);
