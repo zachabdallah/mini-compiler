@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include <math.h>
 %}
 
 %union {
@@ -42,6 +43,7 @@ statement           : variable_declaration
                     | function_call_statement
                     | empty_statement
 					| printf_statement
+
 
 variable_declaration : type IDENTIFIER ';'
                       | type IDENTIFIER '=' expression ';'

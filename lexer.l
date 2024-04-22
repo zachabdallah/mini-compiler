@@ -5,7 +5,12 @@
 #include "parser.tab.h"
 %}
 
-
+T_SIN				sin([0-9])
+T_COS				cos
+T_TAN				tan
+T_ARCCOS			arccos
+T_ARCSIN			arcsin
+T_ARCTAN			arctan
 KEYWORD				("int"|"float"|"char"|"void"|"bool"|"if"|"else"|"else if"|"return"|"break"|"continue"|"for"|"while"|"sin"|"cos"|"tan"|"arcsin"|"arccos"|"arctan"|"printf")
 IDENT               [a-zA-Z_][a-zA-Z0-9_]*
 INT                 [0-9]+
@@ -17,99 +22,131 @@ SPACE               [ \t\n\r\f]
 COMMENT             \/\/.*|\/\*[^*]*\*+\/* 
 
 %%
+{T_SIN}				{ printf("SIN: %s\n", yytext); yylval.strval = strdup(yytext); return SIN; }
+{T_COS}				{ printf("COS: %s\n", yytext); yylval.strval = strdup(yytext); return COS; }
+{T_TAN}				{ printf("TAN: %s\n", yytext); yylval.strval = strdup(yytext); return TAN; }
+{T_ARCSIN}				{ printf("ARCSIN: %s\n", yytext); yylval.strval = strdup(yytext); return ARCSIN; }
+{T_ARCCOS}				{ printf("ARCCOS: %s\n", yytext); yylval.strval = strdup(yytext); return ARCCOS; }
+{T_ARCTAN}				{ printf("ARCTAN: %s\n", yytext); yylval.strval = strdup(yytext); return ARCTAN; }
 {KEYWORD}			{
 					if (strcmp(yytext, "int") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return INT_TYPE;
 						}
 					if (strcmp(yytext, "float") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return FLOAT_TYPE;
 						}
 					if (strcmp(yytext, "char") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return CHAR_TYPE;
 						}					
 					if (strcmp(yytext, "void") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return VOID_TYPE;
 						}	
 					if (strcmp(yytext, "bool") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return BOOL_TYPE;
 						}				
 					if (strcmp(yytext, "if") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return IF;
 						}
 					if (strcmp(yytext, "else") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return ELSE;
 						}				
 					if (strcmp(yytext, "else if") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return ELSE_IF;
 						}				
 					if (strcmp(yytext, "return") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return RETURN;
 						}			
 					if (strcmp(yytext, "break") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return BREAK;
 						}
 					if (strcmp(yytext, "continue") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return CONTINUE;
 						}			
 					if (strcmp(yytext, "for") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return FOR;
 						}			
 					if (strcmp(yytext, "while") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return WHILE;
 						}				
 					if (strcmp(yytext, "sin") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return SIN;
 						}
 					if (strcmp(yytext, "cos") == 0) {
+						printf("KEYWORD: %s\n", yytext);					
 						return COS;
 						}				
 					if (strcmp(yytext, "tan")  == 0) {
+						printf("KEYWORD: %s\n", yytext);					
 						return TAN;
 						}		
 					if (strcmp(yytext, "arcsin") == 0) {
+						printf("KEYWORD: %s\n", yytext);					
 						return ARCSIN;
 						}	
 					if (strcmp(yytext, "arccos") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return ARCCOS;
 						}		
 					if (strcmp(yytext, "arctan") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return ARCTAN;
 						}					
 					if (strcmp(yytext, "printf") == 0) {
+						printf("KEYWORD: %s\n", yytext);
 						return PRINTF;
 						}
 					}	
 					
 {IDENT}				{ printf("IDENTIFIER: %s\n", yytext); yylval.strval = strdup(yytext); return IDENTIFIER; }
 {INT}           	{ printf("INTEGER: %s\n", yytext); yylval.num_int = atoi(yytext); return INTEGER;}
-{NUM_FLOAT}         { yylval.num_float = atof(yytext); return FLOAT;}
-{STRING}			{ yylval.strval = strdup(yytext); return STRING; }
+{NUM_FLOAT}         {yylval.num_float = atof(yytext); return FLOAT;}
+{STRING}			{
+					printf("STRING: %s\n", yytext);
+					yylval.strval = strdup(yytext); return STRING;
+					}
 
-"("					{ return '('; }
-")"					{ return ')'; }
-";"					{ return ';'; }
-","             	{ return ','; }
-"{"                 { return '{'; }
-"}"                 { return '}'; }
-"."                 { return '.'; }
-"="                 { return '='; }
-"++"                { return INCREMENT; }
-"--"                { return DECREMENT; }
-{OPERATOR}      	{ yylval.strval = strdup(yytext); 
+"("					{ printf("LEFT_PAREN: %s\n", yytext); return '('; }
+")"					{ printf("RIGHT_PAREN: %s\n", yytext); return ')'; }
+";"					{ printf("SEMICOLON: %s\n", yytext); return ';';}
+","             	{ printf("COMMA: %s\n", yytext); return ',';}
+"{"                 { printf("LEFT_BRACKET: %s\n", yytext); return '{';}
+"}"                 { printf("RIGHT_BRACKET: %s\n", yytext); return '}';}
+"."                 { printf("DOT: %s\n", yytext); return '.';}
+"="                 { printf("ASSIGNMENT: %s\n", yytext); return '=';}
+"++"                { printf("INCREMENT: %s\n", yytext); return INCREMENT;}
+"--"                { printf("DECREMENT: %s\n", yytext); return DECREMENT;}
+{OPERATOR}      	{yylval.strval = strdup(yytext); 
 						if (strcmp(yylval.strval, "+") == 0 || strcmp(yylval.strval, "-") == 0) {
+							printf("ADDITIVE_OPERATOR: %s\n", yytext); 
 							return ADDITIVE_OPERATOR;
 						}
 						else if (strcmp(yylval.strval, "*") == 0|| strcmp(yylval.strval, "/") == 0 || strcmp(yylval.strval, "&") == 0) {
+							printf("MULTIPLICATIVE_OPERATOR: %s\n", yytext); 
 							return MULTIPLICATIVE_OPERATOR;
 						}
 						else {
+							printf("UNKNOWN_OPERATOR: %s\n", yytext); 
 							return UNKNOWN_OPERATOR;
 						}
 					}
-{RELATIONAL}        { yylval.strval = strdup(yytext); return RELATIONAL; }
+{RELATIONAL}        {yylval.strval = strdup(yytext); return RELATIONAL;}
 {SPACE}             {}
 {COMMENT}           {}
-.                   { return ERROR; }
+.                   {return ERROR;}
 %%
 
 /*
